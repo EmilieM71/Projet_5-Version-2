@@ -3,25 +3,29 @@ from config.config_view import SUBTITLE_FONT, WHITE, TITLE_COLOR, LINE_COLOR
 
 
 class ViewSteps:
-    def __init__(self, root, controller, text1, text2, text3, text4):
+    def __init__(self, root, controller, txt1, txt2, txt3, txt4):
         self.root = root
         self.controller = controller
-        self.text_cnx_mysql = text1
-        self.text_db_is_create = text2
-        self.text_search_if_db_exist = text3
-        self.text_step4 = text4
+        self.text_cnx_mysql = txt1
+        self.text_db_exist = txt2
+        self.text_db_is_create = txt3
+        self.text_presence_data = txt4
         self.frame_steps = Frame(root, bg=WHITE)
-        self.frame_steps.grid(row=0, column=0, sticky='nesw', padx=10, pady=10)
+        self.frame_steps.grid(row=0, column=0, sticky='nesw', padx=5)
+        self.can = None
 
         self.create_widgets()
 
     def function_button(self):
-        pass
+        if self.text_presence_data == "There is no data in database":
+            self.controller.download_data()
+        else:
+            self.controller.controller_user()
 
     def create_widgets(self):
         # create title
         title = Label(self.frame_steps,
-                      text=" STEPS TO LAUNCH THE APPLICATION ",
+                      text=" ETAPES DE LANCEMENT DE L'APPLICATION ",
                       font=SUBTITLE_FONT, bg=WHITE, fg=TITLE_COLOR)
         title.grid(row=0, column=0, sticky='ns', pady=5)
 
@@ -31,167 +35,190 @@ class ViewSteps:
         line1.create_line((10, 10), (370, 10), fill=LINE_COLOR, width=2)
         line1.grid(row=1, sticky='w')
 
-        # create text
-        canvas = Canvas(self.frame_steps, bg=WHITE, width=400, height=480)
-        canvas.grid(row=2, sticky='ns')
-        canvas.create_rectangle(125, 10, 285, 30, fill='', state='disabled',
-                                width=4, outline='green')
-        canvas.create_text(210, 20, state='disabled',
-                           text=" Launch the application ")
-        canvas.create_line((210, 30), (210, 50), fill='green', arrow='last',
-                           width=4)
-        canvas.create_rectangle(160, 50, 260, 90, fill='', state='disabled',
-                                width=4, outline='green')
-        canvas.create_text(210, 60, state='disabled',
-                           text="Connection")
-        canvas.create_text(210, 78, state='disabled',
-                           text="to MySQL")
+        # create canvas
+        self.can = Canvas(self.frame_steps, bg=WHITE, width=430, height=480)
+        self.can.grid(row=2, sticky='ns')
+        self.can.create_rectangle((175, 10), (325, 30), width=4,
+                                  state='disabled', outline='green')
+        self.can.create_text((250, 20), state='disabled',
+                             text=" Lancement de l'application ")
+        self.can.create_line((250, 30), (250, 45), fill='green', arrow='last',
+                             width=4)
+        self.can.create_rectangle((175, 45), (325, 65), width=4,
+                                  state='disabled', outline='green')
+        self.can.create_text((250, 55), state='disabled',
+                             text="Connexion à MySQL")
+        self.can.create_line((250, 65), (250, 80), fill='green', arrow='last',
+                             width=4)
+        self.can.create_polygon(
+            [(200, 100), (250, 120), (300, 100), (250, 80)], width=4, fill='',
+            outline="green")
+        self.can.create_text((250, 100), state='disabled', text="Connecté ?")
+        arrow_yes_1 = self.can.create_line(160, 100, 200, 100, arrow='first')
+        rect_3 = self.can.create_rectangle((110, 90), (160, 110),
+                                           state='disabled')
+        self.can.create_text((135, 100), state='disabled', text='OUI')  # rect3
+        arrow_3 = self.can.create_line((135, 110), (135, 125), arrow='last')
+        arrow_no_1 = self.can.create_line((300, 100), (340, 100), arrow='last')
+        rect_4 = self.can.create_rectangle((340, 90), (390, 110),
+                                           state='disabled')
+        self.can.create_text((365, 100), state='disabled', text='NON')  # rect4
+        arrow_4 = self.can.create_line((365, 110), (365, 125), arrow='last')
+        rect_4b = self.can.create_rectangle((305, 125), (425, 200),
+                                            state='disabled')
+        self.can.create_text((365, 135), state='disabled',
+                             text="Quelque chose ne")  # rect4b line1
+        self.can.create_text((365, 153), state='disabled',
+                             text="va pas avec votre")  # rect4b line2
+        self.can.create_text((365, 171), state='disabled',
+                             text="nom d'utilisateur ou")  # rect4b line3
+        self.can.create_text((365, 189), state='disabled',
+                             text="votre mot de passe")  # rect4b line4
+        rect_5 = self.can.create_rectangle((60, 125), (210, 165),
+                                           state='disabled')
+        self.can.create_text(135, 135, state='disabled',
+                             text="Recherche si la base de")  # rect5 line1
+        self.can.create_text(135, 153, state='disabled',
+                             text="données 'Pur_Beurre' existe")  # rect5 line2
+        arrow_5 = self.can.create_line(135, 165, 135, 180, arrow='last')
 
-        canvas.create_line((210, 90), (210, 100), fill='green', width=4)
-        line1_connect_mysql_ok = canvas.create_line((135, 100), (212, 100),
-                                                    fill=LINE_COLOR)
-        line1_pb_connect_mysql = canvas.create_line((208, 100), (285, 100),
-                                                    fill=LINE_COLOR)
-        line2_connect_mysql_ok = canvas.create_line((135, 100), (135, 120),
-                                                    fill=LINE_COLOR,
-                                                    arrow='last')
-        line2_pb_connect_mysql = canvas.create_line((285, 100), (285, 120),
-                                                    fill=LINE_COLOR,
-                                                    arrow='last')
-        rect_cnx_mysql_ok = canvas.create_rectangle(80, 120, 190, 160, fill='',
-                                                    state='disabled')
-
-        canvas.create_text(135, 130, state='disabled',
-                           text="You are connected")
-        canvas.create_text(135, 148, state='disabled',
-                           text="to MySQL")
-
-        rect_pb_cnx_mysql = canvas.create_rectangle(235, 120, 335, 245,
-                                                    fill='', state='disabled')
-        canvas.create_text(285, 130, text="You are not ")
-        canvas.create_text(285, 148, text="connected to")
-        canvas.create_text(285, 166, text="MySQL : ")
-        canvas.create_text(285, 184, text="something is")
-        canvas.create_text(285, 202, text="wrong with")
-        canvas.create_text(285, 220, text="your user name")
-        canvas.create_text(285, 238, text="or your password")
-
-        line3_cnx_mysql_ok = canvas.create_line((135, 160), (135, 180),
-                                                fill=LINE_COLOR, arrow='last')
-        rect2_cnx_mysql_ok = canvas.create_rectangle(85, 180, 185, 240,
-                                                     fill='', state='disabled')
-        canvas.create_text(135, 190, state='disabled',
-                           text="connection to")
-        canvas.create_text(135, 208, state='disabled',
-                           text="the 'PurBeurre'")
-        canvas.create_text(135, 226, state='disabled',
-                           text="database")
-        line4_cnx_mysql_ok = canvas.create_line((135, 240), (135, 250),
-                                                fill=LINE_COLOR)
+        polygon_2 = self.can.create_polygon([(85, 200), (135, 220), (185, 200),
+                                             (135, 180)], fill='',
+                                            outline='black')
+        self.can.create_text(135, 200, text='bdd existe ?')  # polygon_2
 
         if self.text_cnx_mysql == "You are connected to MySQL":
-            canvas.itemconfig(line1_connect_mysql_ok, fill="green", width=4)
-            canvas.itemconfig(line2_connect_mysql_ok, fill="green", width=4)
-            canvas.itemconfig(rect_cnx_mysql_ok, outline='green', width=4)
-            canvas.itemconfig(line3_cnx_mysql_ok, fill="green", width=4)
-            canvas.itemconfig(rect2_cnx_mysql_ok, outline='green', width=4)
-            canvas.itemconfig(line4_cnx_mysql_ok, fill="green", width=4)
-        elif self.text_cnx_mysql == "":
-            canvas.itemconfig(line1_pb_connect_mysql, fill="red", width=4)
-            canvas.itemconfig(line2_pb_connect_mysql, fill="red", width=4)
-            canvas.itemconfig(rect_pb_cnx_mysql, fill="red", width=4)
+            self.can.itemconfig(arrow_yes_1, fill='green', width=4)
+            self.can.itemconfig(rect_3, outline='green', width=4)
+            self.can.itemconfig(arrow_3, fill='green', width=4)
+            self.can.itemconfig(rect_5, outline='green', width=4)
+            self.can.itemconfig(arrow_5, fill='green', width=4)
+            self.can.itemconfig(polygon_2, outline='green', width=4)
+        elif self.text_cnx_mysql == """Something is wrong with your user name 
+        or password""":
+            self.can.itemconfig(arrow_no_1, fill='red', width=4)
+            self.can.itemconfig(rect_4, outline='red', width=4)
+            self.can.itemconfig(arrow_4, fill='red', width=4)
+            self.can.itemconfig(rect_4b, outline='red', width=4)
 
-        line1_db_exist = canvas.create_line((60, 250), (137, 250),
-                                            fill=LINE_COLOR)
-        line2_db_exist = canvas.create_line((60, 250), (60, 270),
-                                            fill=LINE_COLOR, arrow='last')
-        rect_db_exist = canvas.create_rectangle(10, 270, 110, 325, fill='',
-                                                state='disabled')
-        canvas.create_text(60, 280, state='disabled',
-                           text="The 'PurBeurre'")
-        canvas.create_text(60, 298, state='disabled',
-                           text="database exists")
+        arrow_yes_2 = self.can.create_line((70, 200), (85, 200), arrow='first')
+        rect_6 = self.can.create_rectangle((20, 190), (70, 210),
+                                           state='disabled')
+        self.can.create_text((45, 200), state='disabled', text='OUI')  # rect6
+        arrow_6 = self.can.create_line((45, 210), (45, 310))
+        arrow_6b = self.can.create_line((45, 310), (65, 310), arrow='last')
 
-        line1_db_not_exist = canvas.create_line((133, 250), (210, 250),
-                                                fill=LINE_COLOR)
-        line2_db_not_exist = canvas.create_line((210, 250), (210, 270),
-                                                fill=LINE_COLOR, arrow='last')
-        rect_db_not_exist = canvas.create_rectangle(160, 270, 260, 325,
-                                                    fill='', state='disabled')
-        canvas.create_text(210, 280, state='disabled',
-                           text="The 'PurBeurre'")
-        canvas.create_text(210, 298, state='disabled',
-                           text="database does")
-        canvas.create_text(210, 316, state='disabled',
-                           text="not exists.")
-        line3_db_exist = canvas.create_line((60, 325), (60, 412),
-                                            fill=LINE_COLOR)
-        line4_db_exist = canvas.create_line((58, 410), (137, 410),
-                                            fill=LINE_COLOR)
-        line5_db_exist = canvas.create_line((135, 408), (135, 430),
-                                            fill=LINE_COLOR, arrow='last')
-        line3_db_not_exist = canvas.create_line((210, 325), (210, 335),
-                                                fill=LINE_COLOR)
-        line4_db_not_exist = canvas.create_line((210, 335), (210, 345),
-                                                fill=LINE_COLOR, arrow='last')
-        print("self.text_search_if_db_exist : ", self.text_search_if_db_exist)
-        if self.text_search_if_db_exist == "The PurBeurre database exists.":
-            canvas.itemconfig(line1_db_exist, fill='green', width=4)
-            canvas.itemconfig(line2_db_exist, fill='green', width=4)
-            canvas.itemconfig(rect_db_exist, outline='green', width=4)
-            canvas.itemconfig(line3_db_exist, fill='green', width=4)
-            canvas.itemconfig(line4_db_exist, fill='green', width=4)
-            canvas.itemconfig(line5_db_exist, fill='green', width=4)
-        elif self.text_search_if_db_exist == \
-                "The PurBeurre Database does not exists.":
-            canvas.itemconfig(line1_db_not_exist, fill='green', width=4)
-            canvas.itemconfig(line2_db_not_exist, fill='green', width=4)
-            canvas.itemconfig(rect_db_not_exist, outline='green', width=4)
-            canvas.itemconfig(line3_db_not_exist, fill='green', width=4)
-            canvas.itemconfig(line3_db_not_exist, fill='green', width=4)
-            canvas.itemconfig(line4_db_not_exist, fill='green', width=4)
+        arrow_no_2 = self.can.create_line((185, 200), (200, 200), arrow='last')
+        rect_7 = self.can.create_rectangle((200, 190), (250, 210),
+                                           state='disabled')
+        self.can.create_text((225, 200), state='disabled', text='NON')  # rect7
+        arrow_7 = self.can.create_line((225, 210), (225, 225), arrow='last')
+        rect_8 = self.can.create_rectangle((180, 225), (270, 245),
+                                           state='disabled')
+        self.can.create_text((225, 235), state='disabled',
+                             text='Création bdd')  # rect8
+        arrow_8 = self.can.create_line((225, 245), (225, 255))
+        polygon_3 = self.can.create_polygon([(175, 275), (225, 255),
+                                             (275, 275), (225, 295)], fill='',
+                                            outline='black')
+        self.can.create_text(225, 275, text='bdd créée ?')  # polygon3
+        arrow_yes_3 = self.can.create_line((160, 275), (175, 275),
+                                           arrow='first')
+        rect_9 = self.can.create_rectangle((110, 265), (160, 285),
+                                           state='disabled')
+        self.can.create_text((135, 275), state='disabled', text='OUI')  # rect9
+        arrow_9 = self.can.create_line((135, 285), (135, 300), arrow='last')
+        arrow_no_3 = self.can.create_line((275, 275), (290, 275), arrow='last')
+        rect_10 = self.can.create_rectangle((290, 265), (340, 285),
+                                            state='disabled')
+        self.can.create_text((315, 275), state='disabled', text='NON')  #rect10
+        arrow_12 = self.can.create_line((315, 285), (315, 300), arrow='last')
+        rect_10b = self.can.create_rectangle((240, 300), (390, 340))
+        self.can.create_text((315, 310), state='disabled',
+                             text="Échec lors de la création")  # rect10b line1
+        self.can.create_text((315, 328), state='disabled',
+                             text="de la base de données.")  # rect10b line2
+        rect_11 = self.can.create_rectangle((60, 300), (210, 320))
+        self.can.create_text((135, 310), text='Connexion bdd')  # rect11
+        arrow_10 = self.can.create_line((135, 320), (135, 335), arrow='last')
+        rect_12 = self.can.create_rectangle((60, 335), (210, 375))
+        self.can.create_text((135, 345), state='disabled',
+                             text='Recherche la présence de')  # rect12 line1
+        self.can.create_text((135, 365), state='disabled',
+                             text="données de l'API dans la bdd")  # rect12 line2
+        arrow_11 = self.can.create_line((135, 375), (135, 390), arrow='last')
+        polygon_4 = self.can.create_polygon([(85, 410), (135, 430), (185, 410),
+                                             (135, 390)], fill='',
+                                            outline='black')
+        self.can.create_text(135, 410, text='Données ?')  # polygon4
+        arrow_yes_4 = self.can.create_line((70, 410), (85, 410), arrow='first')
+        rect_13 = self.can.create_rectangle((20, 400), (70, 420))
+        self.can.create_text((45, 410), text='OUI')  # rect13
+        arrow_14 = self.can.create_line((45, 420), (45, 455), arrow='last')
 
-        line1_not_create_db = canvas.create_line((210, 335), (320, 335),
-                                                 fill=LINE_COLOR)
-        line2_not_create_db = canvas.create_line((320, 335), (320, 345),
-                                                 fill=LINE_COLOR, arrow='last')
-        rect_not_create_db = canvas.create_rectangle(270, 345, 370, 400,
-                                                     fill='', state='disabled')
-        canvas.create_text(320, 355, state='disabled',
-                           text="Failed creating")
-        canvas.create_text(320, 372, state='disabled',
-                           text="database.")
+        self.can.create_rectangle((10, 455), (80, 475))  # rect_14
+        self.can.create_text((45, 465), text='Se connecter')  # text rect14
+        arrow_no_4 = self.can.create_line((185, 410), (200, 410), arrow='last')
+        rect_15 = self.can.create_rectangle((200, 400), (250, 420),
+                                            state='disabled')
+        self.can.create_text((225, 410), text='NON')  # text_rect15
+        arrow_13 = self.can.create_line((225, 420), (225, 435), arrow='last')
+        rect_16 = self.can.create_rectangle((150, 435), (300, 475))
+        self.can.create_text((225, 445), text='Chargement des données')
+        # rect16 line1
+        self.can.create_text((225, 463), text='avant connexion')
+        # rect16 line1
 
-        if self.text_db_is_create == "The 'PurBeurre' database is created":
-            print("")
-            canvas.itemconfig(line5_db_exist, fill='green', width=4)
+        if self.text_db_exist == "The PurBeurre database exists.":
+            self.can.itemconfig(arrow_yes_2, fill='green', width=4)
+            self.can.itemconfig(rect_6, outline='green', width=4)
+            self.can.itemconfig(arrow_6, fill='green', width=4)
+            self.can.itemconfig(arrow_6b, fill='green', width=4)
+            self.can.itemconfig(rect_11, outline='green', width=4)
+            self.can.itemconfig(arrow_10, fill='green', width=4)
+            self.can.itemconfig(rect_12, outline='green', width=4)
+            self.can.itemconfig(arrow_11, fill='green', width=4)
+            self.can.itemconfig(polygon_4, outline='green', width=4)
+        elif self.text_db_exist == "The PurBeurre Database does not exists.":
+            self.can.itemconfig(arrow_no_2, fill='green', width=4)
+            self.can.itemconfig(rect_7, outline='green', width=4)
+            self.can.itemconfig(arrow_7, fill='green', width=4)
+            self.can.itemconfig(rect_8, outline='green', width=4)
+            self.can.itemconfig(arrow_8, fill='green', width=4)
+            self.can.itemconfig(polygon_3, outline='green', width=4)
+
+        if self.text_db_is_create == "The database is created.":
+            self.can.itemconfig(arrow_yes_3, fill='green', width=4)
+            self.can.itemconfig(rect_9, outline='green', width=4)
+            self.can.itemconfig(arrow_9, fill='green', width=4)
+            self.can.itemconfig(rect_11, outline='green', width=4)
+            self.can.itemconfig(arrow_10, fill='green', width=4)
+            self.can.itemconfig(rect_12, outline='green', width=4)
+            self.can.itemconfig(arrow_11, fill='green', width=4)
+            self.can.itemconfig(polygon_4, outline='green', width=4)
         elif self.text_db_is_create == "Failed creating database.":
-            canvas.itemconfig(line1_not_create_db, fill='red', width=4)
-            canvas.itemconfig(line2_not_create_db, fill='red', width=4)
-            canvas.itemconfig(rect_not_create_db, outline='red', width=4)
+            self.can.itemconfig(arrow_no_3, fill='red', width=4)
+            self.can.itemconfig(rect_10, outline='red', width=4)
+            self.can.itemconfig(arrow_12, fill='red', width=4)
+            self.can.itemconfig(rect_10b, outline='red', width=4)
 
-        rect_db_create = canvas.create_rectangle(160, 345, 260, 400, fill='',
-                                                 state='disabled')
-        canvas.create_text(210, 355, state='disabled',
-                           text="The 'PurBeurre'")
-        canvas.create_text(210, 373, state='disabled',
-                           text="database is")
-        canvas.create_text(210, 391, state='disabled',
-                           text="created")
+        if self.text_presence_data == "There is no data in database":
+            self.can.itemconfig(arrow_no_4, fill='green', width=4)
+            self.can.itemconfig(rect_15, outline='green', width=4)
+            self.can.itemconfig(arrow_13, fill='green', width=4)
+            self.can.itemconfig(rect_16, outline='green', width=4)
+            text_button = "Chargement des données de l'API et connexion"
 
-        if self.text_db_is_create == "The database is created":
-            canvas.itemconfig(rect_db_create, outline='green', width=4)
-
-        canvas.create_line((210, 400), (210, 410), fill=LINE_COLOR)
-        canvas.create_line((135, 410), (210, 410), fill=LINE_COLOR)
-        # canvas.create_line((135, 410), (135, 430), fill=LINE_COLOR,
-        #                    arrow='last')
-        canvas.create_rectangle(70, 430, 200, 470, fill='', state='disabled')
-        canvas.create_text(135, 440, state='disabled',
-                           text="You are connected")
-        canvas.create_text(135, 458, state='disabled',
-                           text="to 'PurBeurre' Database")
-        button = Button(self.frame_steps, bd=2, text="OK",
-                        font=("Arial", 10), bg='#ADD0EC', fg=WHITE,
-                        command=self.function_button)
-        button.grid(row=13, sticky='ns', pady=5)
+            button = Button(self.frame_steps, bd=2, text=text_button,
+                            font=("Arial", 12), bg='#ADD0EC', fg=WHITE,
+                            command=self.function_button)
+            button.grid(row=13, sticky='ns', pady=5)
+        else:
+            self.can.itemconfig(arrow_yes_4, fill='green', width=4)
+            self.can.itemconfig(rect_13, outline='green', width=4)
+            self.can.itemconfig(arrow_14, fill='green', width=4)
+            text_button = 'SE CONNECTER'
+            button = Button(self.frame_steps, bd=2, text=text_button,
+                            font=("Arial", 12), bg='#ADD0EC', fg=WHITE,
+                            command=self.function_button)
+            button.grid(row=13, sticky='ns', pady=5)
